@@ -4,7 +4,8 @@
 ## 依赖
 - Linux环境
 - Python Tornado
-- 前端UI组件easyUI
+- 前端UI组件easyUI  
+
 ## 说明
 - config/ 命令配置文件
 - app/ 前端页面
