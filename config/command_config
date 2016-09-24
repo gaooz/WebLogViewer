@@ -1,0 +1,1 @@
+mpstat -P ALL 1

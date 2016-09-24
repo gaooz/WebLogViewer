@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Web Log View</title>
+	<link rel="stylesheet" type="text/css" href="static/easyUI/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="static/easyUI/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="static/easyUI/demo/demo.css">
+	<script type="text/javascript" src="static/easyUI/jquery.min.js"></script>
+	<script type="text/javascript" src="static/easyUI/jquery.easyui.min.js"></script>
+
+	<script>
+		//提交到后台用websocket
+		 ws = new WebSocket("ws://gaooz.com:9009/websocket-server");
+
+    		//定义ws的回调函数
+    		ws.onopen = function()
+    		{
+			console.log("websocket server connect success!");
+    		};
+    		ws.onmessage = function(e)
+    		{
+    			//var json = eval("("+e.data+")");
+			var show_element = document.getElementById("show");
+			//show_element.innerHTML = "";
+			var p = document.createElement("p");
+			p.innerHTML = e.data;
+			p.style.color = "#32CD32";
+			p.style.fontSize = "15px";
+			p.style.padding = "5px";
+			show_element.appendChild(p);
+			show_element.scrollTop = show_element.scrollHeight
+    		};
+
+    		ws.onerror = function(e){
+    			alert("Error:can't connect to websocket server!");
+    		}
+
+		function start(){
+			// set the show div to null
+			var show = document.getElementById("show");
+			show.innerHTML = "";
+			var filter1 = document.getElementById("filter1").value,
+				filter2 = document.getElementById("filter2").value,
+				flag = document.getElementById("flag").checked;
+
+			//对输入的值做个验证。
+
+			//alert(flag);
+			var json = "{\"command\":\""+"start"+"\",\"filter1\":\""+filter1+"\",\"filter2\":\""+filter2+"\",\"flag\":\""+flag+"\"}";
+			//alert(json)
+			ws.send(json);
+
+		}
+
+		function stop(){
+			//var ip = document.getElementById("ip"),
+			//command = document.getElementById("command");
+			//ip.value = "";
+			//command.value = "";
+			var json = "{\"command\":\"stop\"}"
+			ws.send(json)
+
+		}
+
+
+	</script>
+
+</head>
+<body bgcolor="#F5F5F5" style="height:100%;">
+
+
+
+	<div class="easyui-layout" style="width:100%;height:900px;">
+		<div data-options="region:'north'" style="height:70px">
+			<div style="padding:5px">
+				<h1>Web Log Debug View 1.0</h1>
+				
+			</div>
+		</div>
+
+
+		<div data-options="region:'west',split:true" title="Input Condition" style="width:20%;">
+			<table cellpadding="8">
+		
+			<tr>
+				<td>过滤词1:</td>
+				<td><input id="filter1" class="easyui-validatebox textbox" ></td>
+				<td><input id="flag" name="flag" type="checkbox"/>And/OR</td>
+			</tr>
+
+
+			<tr>
+				<td>过滤词2:</td>
+				<td><input id="filter2" class="easyui-validatebox textbox"></td>
+			</tr>
+		
+		<!--
+			<tr>
+				<td>过滤词3:</td>
+				<td><input id="filter3" class="easyui-validatebox textbox"></td>
+			</tr>
+		-->
+	
+				<tr>
+					<td><a href="javascript:start()" class="easyui-linkbutton">开启</a></td>
+					<td><a href="javascript:stop()" class="easyui-linkbutton">停止</a></td>
+				</tr>
+
+		</table>
+		</div>
+
+		<div data-options="region:'center',iconCls:'icon-ok'" title="Result">
+			<div id="show" style="background-color:#363636;overflow:auto" class="easyui-layout" data-options="fit:true">
+
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
